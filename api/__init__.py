@@ -12,6 +12,7 @@ from api.models.property import Property
 
 # ============ Import Views ============
 from api.views.auth import auth
+from api.views.properties import properties
 
 cors = CORS()
 migrate = Migrate() 
@@ -27,6 +28,8 @@ def create_app(config):
 
   # ============ Register Blueprints ============
   app.register_blueprint(auth, url_prefix='/api/auth') 
+  app.register_blueprint(properties, url_prefix='/api/properties') 
+  
 
   return app
 
