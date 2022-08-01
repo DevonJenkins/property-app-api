@@ -16,3 +16,17 @@ def create():
   db.session.add(property)
   db.session.commit()
   return jsonify(property.serialize()), 201
+
+@properties.route('/', methods=["GET"])
+def index():
+  properties = Property.query.all()
+  return jsonify([property.serialize() for property in properties]), 200
+
+@properties.route('/<id>', methods=["GET"])
+def show(id):
+  property = Property.query.filter_by(id=id).first()
+  property_data = property.serialize()
+  return jsonify(property=property_data), 200
+
+
+
