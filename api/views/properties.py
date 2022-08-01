@@ -28,5 +28,18 @@ def show(id):
   property_data = property.serialize()
   return jsonify(property=property_data), 200
 
+@properties.route('/<id>', methods=["PUT"])
+@login_required
+def update(id):
+  data = request.get_json()
+  profile = read_token(request)
+  property = Property.query.filter_by(id=id).first()
 
+  if property.profile_id != profile["id"]:
+    return 'Forbidden', 403
+  for key in data:
+    setattr(property, key, data[key])
+  
+  db.session.commit()
+  return jsonify(property.serialize()), 200
 
