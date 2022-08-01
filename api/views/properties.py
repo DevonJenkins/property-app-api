@@ -43,3 +43,15 @@ def update(id):
   db.session.commit()
   return jsonify(property.serialize()), 200
 
+@properties.route("/<id>", methods=["DELETE"])
+@login_required
+def delete(id):
+  profile = read_token(request)
+  property = Property.query.filter_by(id=id).first()
+
+  if property.profile_id != profile["id"]:
+    return 'Forbidden', 403 
+
+  db.session.delete(property)
+  db.session.commit()
+  return jsonify(message="Success"), 200
