@@ -8,7 +8,7 @@ from config import Config
 from api.models.user import User
 from api.models.profile import Profile
 from api.models.property import Property
-
+from api.models.item import Item 
 
 # ============ Import Views ============
 from api.views.auth import auth
