@@ -8,12 +8,18 @@ class Property(db.Model):
     description = db.Column(db.String(250))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'))
-   #continue modeling the database. refer to ERD 
+    
+    items = db.relationship("Item", cascade='all')
 
     def __repr__(self):
       return f"Property(`{property.id}`, {property.name}'"
 
-    def serialize(self):
-      property = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-      return property
+#    def serialize(self):
+#      property = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+#      return property
 
+    def serialize(self): 
+      property = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+      items = [item.serialize() for item in self.items]
+      property['items'] = items 
+      return property 

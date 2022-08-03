@@ -7,13 +7,18 @@ class Item(db.Model):
     name = db.Column(db.String(100))
     description = db.Column(db.String(250))
     quantity = db.Column(db.Integer)
+    date = db.Column(db.DateTime, default=datetime.now(tz=None))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     profile_id = db.Column(db.Integer, db.ForeignKey('profiles.id'))
     property_id = db.Column(db.Integer, db.ForeignKey('properties.id'))
 
-def __repr__(self):
-  return f"Item(`{self.id}`, `{self.name}`)"
-  
-def serialialize(self):
-  item = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-  return item 
+    def __repr__(self):
+      return f"Item(`{self.id}`, `{self.name}`)"
+    
+    def serialize(self):
+      return {
+        "id": self.id,
+        "name": self.name, 
+        "property_id": self.property_id,
+   #     "date": self.date.strftime('%Y-%m-%y'),
+          } 

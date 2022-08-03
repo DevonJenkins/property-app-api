@@ -3,6 +3,7 @@ from api.middleware import login_required, read_token
 
 from api.models.db import db
 from api.models.property import Property
+from api.models.item import Item
 
 properties = Blueprint('properties', 'properties')
 
@@ -55,3 +56,30 @@ def delete(id):
   db.session.delete(property)
   db.session.commit()
   return jsonify(message="Success"), 200
+
+#POST api/properties/<id>/items
+@properties.route('/<id>/items', methods=["POST"])
+@login_required 
+def add_item(id):
+  data = request.get_json()
+  data["property_id"] = id 
+
+  profile = read_token(request)    
+  property = Property.query.filter_by(id=id).first()
+  
+  if property.profile_id != profile["id"]:
+    return 'Forbidden', 403
+
+  item = Item(**data)
+
+  db.session.add(item)
+  db.session.commit()
+  
+  property_data = property.serialize()
+  
+  return jsonify(property_data), 201
+
+@properties.route('/<id>/items', methods=["GET"])
+def item_index(id):
+  items = Item.query.all()
+  return jsonify([item.serialize() for item in items]), 200
