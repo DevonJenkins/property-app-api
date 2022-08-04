@@ -79,7 +79,22 @@ def add_item(id):
   
   return jsonify(property_data), 201
 
-@properties.route('/<id>/items', methods=["GET"])
-def item_index(id):
+@properties.route('/<property_id>/items', methods=["GET"])
+def item_index(property_id):
+
   items = Item.query.all()
   return jsonify([item.serialize() for item in items]), 200
+
+@properties.route("/<property_id>/items/<id>", methods=["DELETE"])
+@login_required
+def item_delete(property_id, id):
+#  profile = read_token(request)
+  item = Item.query.filter_by(id=id).first()
+#  property = Property.query.filter_by(id=id).first()
+#
+#  if property.profile_id != profile["id"]:
+#    return 'Forbidden', 403 
+
+  db.session.delete(item)
+  db.session.commit()
+  return jsonify(message="Success"), 200
