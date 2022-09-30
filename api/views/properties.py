@@ -31,6 +31,7 @@ def show(id):
   property_data = property.serialize()
   return jsonify(property=property_data), 200
 
+#Property edit
 @properties.route('/<id>', methods=["PUT"])
 @login_required
 def update(id):
@@ -81,12 +82,14 @@ def add_item(id):
   
   return jsonify(property_data), 201
 
+#Item index 
 @properties.route('/<property_id>/items', methods=["GET"])
 def item_index(property_id):
 
   items = Item.query.all()
   return jsonify([item.serialize() for item in items]), 200
 
+#Item show
 @properties.route('/<property_id>/items/<id>', methods=["GET"])
 def item_show(property_id, id):
   item = Item.query.filter_by(id=id).first()
@@ -94,16 +97,35 @@ def item_show(property_id, id):
 
   return jsonify(item=item_data), 200
 
+#Item_Update
+@properties.route('/<property_id>/items/<id>', methods=["PUT"])
+@login_required
+def item_update(property_id, id):
+  print("hello from backend")
+  print(property_id, id)
+  print("data: ", request.get_json())
+  data = request.get_json()
+  profile = read_token(request)
+  item = Item.query.filter_by(id=id).first()
 
+#consider adding protection here
+
+  for key in data:
+    setattr(item, key, data[key])
+
+  db.session.commit()
+  return jsonify(item.serialize()), 200
+
+#Item Delete
 @properties.route("/<property_id>/items/<id>", methods=["DELETE"])
 @login_required
 def item_delete(property_id, id):
   profile = read_token(request)
   item = Item.query.filter_by(id=id).first()
 
-  if item.profile_id != profile["id"]:
-    return 'Forbidden', 403 
+#consider adding protection here
 
   db.session.delete(item)
   db.session.commit()
   return jsonify(message="Success"), 200
+
