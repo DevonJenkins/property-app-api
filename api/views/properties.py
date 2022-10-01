@@ -129,3 +129,4 @@ def item_delete(property_id, id):
   db.session.commit()
   return jsonify(message="Success"), 200
 
+#consider adding protection here
